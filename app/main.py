@@ -1,6 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, HTTPException
 from starlette.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import date
 
 # from joblib import load
@@ -27,13 +27,18 @@ try:
 except ImportError as e:
     print(f"Error importing Prophet: {e}")
 
+# # Define a constrained date type with the desired range
+# ConstrainedDate = condate(ge=date(2015, 4, 18), le=date(2020, 12, 31))
 
-# Create a Pydantic model to validate the input data
-class User_input(BaseModel):
-    target_date: date 
+# # Create a Pydantic model to validate the input data
+# class User_input(BaseModel):
+#     # target_date: date = Field(..., format="YYYY-MM-DD", ge="2015-04-18", le="2020-12-31") 
+#     target_date: ConstrainedDate = Field(..., description="Date must be between 2015-04-18 and 2020-12-31")
 
-class forecast_output(BaseModel):
-    forecast: dict     
+
+# class forecast_output(BaseModel):
+#     ds: date
+#     yhat: float     
     
 
 # Load the forecast model
@@ -54,15 +59,32 @@ def read_root():
 def healthcheck():
     return'Ready to Predict and Forecast Sales'
 
+# @app.post("/validate_date/")
+# def validate_date(user_input: User_input):
+#     try:
+#         return {"message": "Date is valid", "target_date": user_input.target_date}
+#     except ValidationError as e:
+#         raise HTTPException(status_code=422, detail=str(e))
+    
+
+# @app.get("/predict/")
+# def predict(target_date: date ):
+    
+#     return {"message": "Date is valid", "target_date": target_date}
 @app.get("/sales/national")
-def predict(target_date='2015-05-19'):
+def predict(target_date: date = Query(..., description="Target date for sales forecasting must be beween 2015-04-18 and 2020-12-31")):
+    if not (date(2015, 4, 18) <= target_date <= date(2020, 12, 31)):
+        raise HTTPException(status_code=422, detail="Date must be between 2015-04-18 and 2020-12-31")
+    
     target_date= pd.to_datetime(target_date)
     target_date_end = target_date + pd.Timedelta(days=7)
-    last_date=pd.to_datetime('2015-04-25') #####Plz UPDATE
+    last_date=pd.to_datetime('2015-04-18') 
     days_to_forecast=(target_date_end - last_date).days
     days_to_forecast
-    future = m.make_future_dataframe(periods=days_to_forecast, freq='D')   # Create a future DataFrame for 12 months
+    future = m.make_future_dataframe(periods=days_to_forecast, freq='D')   # Create a future DataFrame
     forecast = m.predict(future)   
     forecast_api=forecast[['ds','yhat']].tail(7)
-    return forecast_api.to_dict(orient='records')
+    forecast_api['ds'] = forecast_api['ds'].dt.date
+    forecast_dict = forecast_api.set_index('ds')['yhat'].to_dict()
+    return forecast_dict
 
