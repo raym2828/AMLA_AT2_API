@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
-CMD ["streamlit", "run", "app.py"]
+CMD ["streamlit", "run", "app/app.py"]

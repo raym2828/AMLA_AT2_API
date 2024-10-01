@@ -1,0 +1,20 @@
+fast-api/
+    |-ml_stuff/
+        |-data/
+        |-models/
+            |-predictive/
+            |-forecasting/
+            |-transformation/
+        |-transforms.py
+        |-predict.py
+        |-__init__.py
+    |-app/
+        |-main.py
+    |-Dockerfile
+    |-requirements.txt
+
+streamlit/
+    |-app/
+        |-main.py
+    |-Dockerfile
+    |-requirements
