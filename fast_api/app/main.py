@@ -1,3 +1,4 @@
+# Import the required libraries
 import datetime
 from fastapi import FastAPI, Query, HTTPException
 from datetime import date
@@ -5,11 +6,13 @@ import pandas as pd
 import numpy as np
 from pydantic import BaseModel, ValidationError, validator
 import xgboost as xgb
-np.float_ = np.float64 #type: ignore
+np.float_ = np.float64 
 from prophet.serialize import model_to_json, model_from_json
 import json
 
 from ml_stuff.models.xgboost_model_sales import sales_predict # Import the sales_predict function
+
+from ml_stuff.models.prophet_model_forecaster import sales_forecast # Import the sales_forecast function
 
 # Load calendar events
 df_calendar_events = pd.read_csv('ml_stuff/data/calendar_events.csv', dtype={
@@ -27,9 +30,7 @@ with open('ml_stuff/models/forecasting/prophet_serialized_model.json', 'r') as f
 
 # Load the predict model
 model = xgb.Booster()
-
 model.load_model('ml_stuff/models/predictive/xgb_revenue_predictor.model')
-
 
 # Create a Pydantic model to validate the input data
 class PredictionInput(BaseModel):
@@ -50,16 +51,6 @@ class PredictionInput(BaseModel):
         return v
 
 
-# # Define a constrained date type with the desired range
-# ConstrainedDate = condate(ge=date(2015, 4, 18), le=date(2020, 12, 31))
-
-
-# class forecast_output(BaseModel):
-#     ds: date
-#     yhat: float
-
-print(df_calendar_events.dtypes)
-
 # Create a FastAPI instance
 app = FastAPI()
 
@@ -74,15 +65,7 @@ def read_root():
 def healthcheck():
     return'Ready to Predict and Forecast Sales'
 
-# @app.post("/validate_date/")
-# def validate_date(user_input: User_input):
-#     try:
-#         return {"message": "Date is valid", "target_date": user_input.target_date}
-#     except ValidationError as e:
-#         raise HTTPException(status_code=422, detail=str(e))
-
-
-#     return {"message": "Date is valid", "target_date": target_date}
+# Define the forecast endpoint
 @app.get("/sales/national")
 def forecast(
     target_date: date = Query(
@@ -94,22 +77,14 @@ def forecast(
         raise HTTPException(
             status_code=422, detail="Date must be between 2015-04-18 and 2020-12-31"
         )
+    try:
+        forecast = sales_forecast(target_date, m)
+        return forecast
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
-    target_date = pd.to_datetime(target_date)
-    target_date_end = target_date + pd.Timedelta(days=7)
-    last_date = pd.to_datetime("2015-04-18")
-    days_to_forecast = (target_date_end - last_date).days
-    days_to_forecast
-    future = m.make_future_dataframe(
-        periods=days_to_forecast, freq="D"
-    )  # Create a future DataFrame
-    forecast = m.predict(future)
-    forecast_api = forecast[["ds", "yhat"]].tail(7)
-    forecast_api["ds"] = forecast_api["ds"].dt.date
-    forecast_dict = forecast_api.set_index("ds")["yhat"].to_dict()
-    return forecast_dict
-
-
+# Define the predict endpoint
 @app.get("/sales/stores/items")
 async def predict(
     # Inputs into predict with default values for ease of use
