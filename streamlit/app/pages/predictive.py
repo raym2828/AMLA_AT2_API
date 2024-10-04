@@ -13,7 +13,7 @@ if button:
     else:
         date_str = date.strftime('%Y-%m-%d')
 
-    response = requests.get(f"http://0.0.0.0:8000/sales/stores/items?target_date={date_str}&item_id={item_id}&store_id={store_id}")
+    response = requests.get(f"https://fast-api-1-0.onrender.com/sales/stores/items?target_date={date_str}&item_id={item_id}&store_id={store_id}")
 
     prediction = response.json()
     st.write(prediction)
