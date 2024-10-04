@@ -42,7 +42,7 @@ def sales_predict(
     dmatrix = xgb.DMatrix(df, enable_categorical=True)
 
     # Make predictions
-    predictions = model.predict(dmatrix)
+    predictions = model.predict(dmatrix, iteration_range=(0, model.best_iteration + 1))
 
     # # Ensure no values are less than zero
     predictions_zero_bound = np.maximum(predictions, 0)

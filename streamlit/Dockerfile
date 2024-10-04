@@ -1,4 +1,4 @@
-FROM python:3.11.4-slim
+FROM python:3.11.4
 
 WORKDIR /app
 
@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
-CMD [ "uvicorn", "app.main:app", "--host", "0.0.0.0"]
+CMD ["streamlit", "run", "app/main.py"]
