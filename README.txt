@@ -14,11 +14,6 @@ To launch the tool you have to open both the API and the Streamlit from end webs
 https://amla-at2-api-1.onrender.com
 https://fast-api-1-0.onrender.com
 
-
-## Pages in Streamlit
-
-
-
 ## API Endpoints
 
 ### GET /sales/national
