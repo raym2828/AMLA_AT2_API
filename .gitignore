@@ -1,2 +1,3 @@
 /venv
 /fast_api/ml_stuff/models/predictive/xgb_revenue_predictor.model
+fast_api/ml_stuff/models/predictive/xgb_revenue_predictor9.model
