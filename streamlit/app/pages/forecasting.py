@@ -8,7 +8,12 @@ if date:
     else:
         date_str = date.strftime('%Y-%m-%d')
 
-    response = requests.get(f"https://fast-api-1-0.onrender.com/sales/national?target_date={date_str}")
-
+    try:
+        response = requests.get(f"https://fast-api-1-0.onrender.com/sales/national?target_date={date_str}")
+        response.raise_for_status() 
+    except requests.exceptions.HTTPError as e:
+        st.write(f'Error: {e}')
+        st.stop()
+    
     forecast = response.json()
     st.write(forecast)
