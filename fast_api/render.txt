@@ -1,0 +1,2 @@
+https://amla-at2-api-1.onrender.com
+https://fast-api-1-0.onrender.com

@@ -1,6 +1,6 @@
 # Import the necessary libraries
 import datetime
-import xgboost as xgb
+from xgboost import DMatrix
 import pandas as pd
 import numpy as np
 
@@ -27,8 +27,11 @@ def sales_predict(
     # Add calendar events and to the inputs
     df = pd.merge(df, df_calendar_events, on="date", how="left").fillna("N")
 
+    # Drop the dept_id column
+    df = df.drop(columns=["dept_id"])
+
     # Turn the categories columns into category data encoded using the same mappings as the training
-    category_columns = ["item_id","dept_id","cat_id","store_id","state_id","event_name","event_type"]
+    category_columns = ["item_id","cat_id","store_id","state_id","event_name","event_type"]
 
     # Apply the mappings to the category columns
     for col in category_columns:
@@ -36,10 +39,10 @@ def sales_predict(
 
     # Convert the date to a datetime object then into integer
     df["date"] = pd.to_datetime(df["date"]).astype(int)
-    df = df[["item_id","dept_id","cat_id","store_id","state_id","date","event_name","event_type"]]
+    df = df[["item_id","cat_id","store_id","state_id","date","event_name","event_type"]]
     
     # Turn df into a DMatrix
-    dmatrix = xgb.DMatrix(df, enable_categorical=True)
+    dmatrix = DMatrix(df, enable_categorical=True)
 
     # Make predictions
     predictions = model.predict(dmatrix, iteration_range=(0, model.best_iteration + 1))

@@ -5,10 +5,11 @@ from datetime import date
 import pandas as pd
 import numpy as np
 from pydantic import BaseModel, ValidationError, validator
-import xgboost as xgb
+from xgboost import Booster 
+
 np.float_ = np.float64 
-from prophet.serialize import model_to_json, model_from_json
 import json
+import joblib
 
 from ml_stuff.models.xgboost_model_sales import sales_predict # Import the sales_predict function
 
@@ -24,13 +25,14 @@ df_calendar_events = pd.read_csv('ml_stuff/data/calendar_events.csv', dtype={
 with open('ml_stuff/models/transformations/category_mappings.json', 'r') as f:
     category_mappings = json.load(f)
 
-# Load the forecast model
-with open('ml_stuff/models/forecasting/prophet_serialized_model.json', 'r') as fin:
-    m = model_from_json(fin.read())  # Load model
 
-# Load the predict model
-model = xgb.Booster()
-model.load_model('ml_stuff/models/predictive/xgb_revenue_predictor.model')
+
+m = joblib.load('ml_stuff/models/forecasting/prophet_serialized_model.json')
+
+      
+# # Load the predict model
+model = Booster()
+model.load_model('ml_stuff/models/predictive/xgb_revenue_predictor9.model')
 
 # Create a Pydantic model to validate the input data
 class PredictionInput(BaseModel):
