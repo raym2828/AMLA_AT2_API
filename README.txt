@@ -9,29 +9,10 @@ Development and deployment of sales forecasting models for American Retailer Co,
 - A predictive model for item-level sales forecasting.
 - A forecasting model for overall revenue prediction.
 
-
-## Installation
-
-### Prerequisites
-
-List any prerequisites that need to be installed before your project can be used.
-
-- Python 3.11.4
-- pip
-
-### Clone the Repository
-
-```sh
-git clone https://github.com/raym2828/AMLA_AT2_API
-cd AMLA_AT2_API
-```
-
-### Install Dependencies
-
-```sh
-pip install -r requirements.txt
-```
-
+## Launch Tool
+To launch the tool you have to open both the API and the Streamlit from end webservice serperately
+https://amla-at2-api-1.onrender.com
+https://fast-api-1-0.onrender.com
 
 ## API Endpoints
 
@@ -63,3 +44,47 @@ pip install -r requirements.txt
     - **Content**: { "detail": "Parameter name is required" }
     - **Code**: 422 Unprocessable Entity
     - **Content**: JSON object with validation error details.
+
+### Folder structure
+fast-api/
+    |-ml_stuff/
+        |-data/
+        |-models/
+            |-predictive/
+            |-forecasting/
+            |-transformation/
+        |-transforms.py
+        |-predict.py
+        |-__init__.py
+    |-app/
+        |-main.py
+    |-Dockerfile
+    |-requirements.txt
+
+streamlit/
+    |-app/
+        |-main.py
+    |-Dockerfile
+    |-requirements 
+
+
+
+### Prerequisites
+
+List any prerequisites that need to be installed before your project can be used.
+
+- Python 3.11.4
+- pip
+
+### Clone the Repository
+
+```sh
+git clone https://github.com/raym2828/AMLA_AT2_API
+cd AMLA_AT2_API
+```
+
+### Install Dependencies
+
+```sh
+pip install -r requirements.txt
+```
