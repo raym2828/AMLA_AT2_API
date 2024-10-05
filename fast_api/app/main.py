@@ -61,7 +61,7 @@ app = FastAPI()
 ################################################################
 @app.get("/")
 def read_root():
-    return {'message': 'This is the sales prediction and forecasting tool for American Retailer Co.'}
+    return {'message': 'This is the sales prediction and forecasting tool for American Retailer Co. Click [here](https://github.com/raym2828/AMLA_AT2_API) to check the Github repo.'}
 
 @app.get("/health", status_code=200)
 def healthcheck():
